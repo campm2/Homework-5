@@ -50,16 +50,17 @@ public static void main(String [] args) throws IOException {
 			   WriteToFile(outFile,"The roll is a " +dice_player1);
 			   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
 			   while(turn.equals("Point")) {
-				   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
-				   
+				   turn=DecideWhoWin(dice_player1,dice_player2,outFile); 
 			   }
 			   	player1_Total_Amount+=Player1_Bet_Amount;
 			   	player2_Total_Amount-=Player1_Bet_Amount;
-			   	System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+			   	System.out.println("Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
+			   	WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
 		   }
 			else if (turn.equals("Player 2")){
 				dice_player2=RollDice();
 				dice_player1=0;
+				// if player 2 total money is more or equal to 1000
 				if(player2_Total_Amount>=1000) {
 					player2_Bet_Amount=150;
 					System.out.println("Wager " + count +" :Bet is " + player2_Bet_Amount);
@@ -70,13 +71,14 @@ public static void main(String [] args) throws IOException {
 					WriteToFile(outFile,"The roll is a " +dice_player2);
 					turn=DecideWhoWin(dice_player1,dice_player2,outFile);
 					 while(turn.equals("Point")) {
-						   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
-						   
+						   turn=DecideWhoWin(dice_player1,dice_player2,outFile);  
 					 }
 					player2_Total_Amount+=player2_Bet_Amount;
 					player1_Total_Amount-=player2_Bet_Amount;
-					System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+					System.out.println("Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
+				   	WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
 				 }
+				//if player 2 total money is less than 1000
 				  else if(player2_Total_Amount<1000) {
 					  player2_Bet_Amount=50;
 					  System.out.println("Wager " + count +" :Bet is " + player2_Bet_Amount);
@@ -91,7 +93,8 @@ public static void main(String [] args) throws IOException {
 					  }
 					  player2_Total_Amount+=player2_Bet_Amount;
 					  player1_Total_Amount-=player2_Bet_Amount;
-					  System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+					  System.out.println("Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
+					  WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
 						
 				  }// end of else
 		     }//end of else if
@@ -104,6 +107,7 @@ public static void main(String [] args) throws IOException {
 	/**
 	 *@param  randomNumber
 	 *@param rolls
+	 *@return rolls which will be between 1&6
 	 */
 	public static int GenerateRandomNumber() {
 		Random randomNumbers=new Random();
@@ -118,10 +122,10 @@ public static void main(String [] args) throws IOException {
 		return sum_Of_Rolls;
 	}
 	/**
-	 * @param dice_player1
-	 * @param dice_player2
-	 * @param pw
-	 * @return
+	 * @param dice_player1// what player 1 rolls
+	 * @param dice_player2// what player 2 rolls
+	 * @param pw //to write to the file
+	 * @return answer// will determine who plays next
 	 * @throws IOException
 	 */
 	public static String DecideWhoWin(int dice_player1,int dice_player2,PrintWriter pw) throws IOException {
@@ -134,7 +138,6 @@ public static void main(String [] args) throws IOException {
 				WriteToFile(pw,"That is a natural! Player 2 Wins!");
 				answer="Player 2";
 				return answer;
-			
 			}
 			else if(dice_player2==2|| dice_player2==3 ||dice_player2==12) {
 				//if player  rolls a craps
@@ -145,6 +148,7 @@ public static void main(String [] args) throws IOException {
 			}
 			else if(dice_player2==4 || dice_player2==5 || dice_player2==6 || dice_player2==8 || dice_player2==9 || dice_player2==10) {
 				int dice_Roll2=RollDice();
+				//if new roll matches point
 				if(dice_Roll2==dice_player2) {
 					System.out.println("Player 2 Wins!");
 					WriteToFile(pw," Player 2 Wins!");
@@ -154,7 +158,8 @@ public static void main(String [] args) throws IOException {
 				else if (dice_Roll2!=7 && dice_Roll2!=dice_player2) {
 					answer="Point";
 					return answer;
-				}
+				}//end of else if
+				// if new roll is a 7
 				else if(dice_Roll2==7) {
 					System.out.println("Player 1 Wins!");
 					WriteToFile(pw," Player 1 Wins!");
@@ -163,7 +168,7 @@ public static void main(String [] args) throws IOException {
 				}// end of second else if	
 			}
 	
-		}// end of if
+		}// end of main if
 		
 		else if(dice_player2==0) {
 			if(dice_player1==7 || dice_player1==11) {
@@ -183,6 +188,7 @@ public static void main(String [] args) throws IOException {
 			}//end of else if
 			else if(dice_player1==4 || dice_player1==5 || dice_player1==6 || dice_player1==8 || dice_player1==9 || dice_player1<=10) {
 				int dice_Roll2=RollDice();
+				//if the new roll matches the point
 				if(dice_Roll2==dice_player1) {
 					System.out.println("Player 1 Wins!");
 					WriteToFile(pw,"Player 1 Wins!");
@@ -192,7 +198,8 @@ public static void main(String [] args) throws IOException {
 				else if (dice_Roll2!=7 && dice_Roll2!=dice_player1) {
 					answer="Point";
 					return answer;
-				}
+				}//end of first else if
+				//if the new roll is 7
 				else if(dice_Roll2==7) {
 					System.out.println("Player 2 Wins!");
 					WriteToFile(pw,"Player 2 Wins!");
@@ -200,16 +207,18 @@ public static void main(String [] args) throws IOException {
 					return answer;
 				}// end of second else if
 				
-			}//end of else if
+			}//end of main else if
 	}
+		//will return this if function does not go through ifs
+		//should not get here
 		return error;
 		
 }
 	/**
 	 * 
-	 * @param money_player1
-	 * @param money_player2
-	 * @param pw
+	 * @param money_player1// the total money player 1 has
+	 * @param money_player2// the total money player 2 has
+	 * @param pw// to output to file
 	 * @throws IOException
 	 */
 	public static void AnnounceFinalWinner(int money_player1, int money_player2, PrintWriter pw) throws IOException {

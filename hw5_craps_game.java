@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 public class hw5_craps_game {
 public static void main(String [] args) throws IOException {
 	   String turn="Player 1";
-	   String who_Last=turn;
 	   int WAGERS = 20;
 	   int dice_player2=0;
 	   int dice_player1=0;
@@ -43,45 +42,57 @@ public static void main(String [] args) throws IOException {
 		   if(turn.equals("Player 1")) {
 			   dice_player1=RollDice();
 			   dice_player2=0;
-			   System.out.printf("Wager %d:Bet is %d\n",count,Player1_Bet_Amount);
+			   System.out.println("Wager " + count +" :Bet is " + Player1_Bet_Amount);
+			   WriteToFile(outFile, "Wager " + count +" :Bet is " + Player1_Bet_Amount);
 			   System.out.println("Player 1 is rolling.");
-			   System.out.printf("The roll is a %d\n",dice_player1);
+			   WriteToFile(outFile,"Player 1 is rolling.");
+			   System.out.println("The roll is a " +dice_player1);
+			   WriteToFile(outFile,"The roll is a " +dice_player1);
 			   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
-			   //if(who_Last.equals("Player1")) {
+			   while(turn.equals("Point")) {
+				   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
+				   
+			   }
 			   	player1_Total_Amount+=Player1_Bet_Amount;
 			   	player2_Total_Amount-=Player1_Bet_Amount;
 			   	System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
-			   //}
 		   }
 			else if (turn.equals("Player 2")){
 				dice_player2=RollDice();
 				dice_player1=0;
 				if(player2_Total_Amount>=1000) {
 					player2_Bet_Amount=150;
-					System.out.printf("Wager %d:Bet is %d\n",count,player2_Bet_Amount);
+					System.out.println("Wager " + count +" :Bet is " + player2_Bet_Amount);
+					WriteToFile(outFile,"Wager " + count +" :Bet is " + player2_Bet_Amount);
 					System.out.println("Player 2 is rolling.");
-					System.out.printf("The roll is a %d\n",dice_player2);
+					WriteToFile(outFile,"Player 2 is rolling.");
+					System.out.println("The roll is a " +dice_player2);
+					WriteToFile(outFile,"The roll is a " +dice_player2);
 					turn=DecideWhoWin(dice_player1,dice_player2,outFile);
-					//if(who_Last.equals("Player 2")){
-						player2_Total_Amount+=player2_Bet_Amount;
-					   	player1_Total_Amount-=player2_Bet_Amount;
-						System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
-					   	
-					//}
+					 while(turn.equals("Point")) {
+						   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
+						   
+					 }
+					player2_Total_Amount+=player2_Bet_Amount;
+					player1_Total_Amount-=player2_Bet_Amount;
+					System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
 				 }
 				  else if(player2_Total_Amount<1000) {
 					  player2_Bet_Amount=50;
-					  System.out.printf("Wager %d: Bet is %d\n",count,player2_Bet_Amount);
-					  System.out.println("Player 2 is rolling.");
-					  System.out.printf("The roll is a %d\n",dice_player2);
+					  System.out.println("Wager " + count +" :Bet is " + player2_Bet_Amount);
+						WriteToFile(outFile,"Wager " + count +" :Bet is " + player2_Bet_Amount);
+						System.out.println("Player 2 is rolling.");
+						WriteToFile(outFile,"Player 2 is rolling.");
+						System.out.println("The roll is a " +dice_player2);
+						WriteToFile(outFile,"The roll is a " +dice_player2);
 					  turn=DecideWhoWin(dice_player1,dice_player2,outFile);
-					  //if(who_Last.equals("Player2")) {
-						  player2_Total_Amount+=player2_Bet_Amount;
-						   player1_Total_Amount-=player2_Bet_Amount;
-							System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+					  while(turn.equals("Point")) {
+						   turn=DecideWhoWin(dice_player1,dice_player2,outFile); 
+					  }
+					  player2_Total_Amount+=player2_Bet_Amount;
+					  player1_Total_Amount-=player2_Bet_Amount;
+					  System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
 						
-					  //}
-	
 				  }// end of else
 		     }//end of else if
 		  turn=DecideWhoWin(dice_player1,dice_player2,outFile);
@@ -106,6 +117,13 @@ public static void main(String [] args) throws IOException {
 		int sum_Of_Rolls=GenerateRandomNumber() +GenerateRandomNumber();
 		return sum_Of_Rolls;
 	}
+	/**
+	 * @param dice_player1
+	 * @param dice_player2
+	 * @param pw
+	 * @return
+	 * @throws IOException
+	 */
 	public static String DecideWhoWin(int dice_player1,int dice_player2,PrintWriter pw) throws IOException {
 		String answer="";
 		String error="error";
@@ -133,6 +151,10 @@ public static void main(String [] args) throws IOException {
 					answer="Player 2";
 					return answer;
 				}// end of if
+				else if (dice_Roll2!=7 && dice_Roll2!=dice_player2) {
+					answer="Point";
+					return answer;
+				}
 				else if(dice_Roll2==7) {
 					System.out.println("Player 1 Wins!");
 					WriteToFile(pw," Player 1 Wins!");
@@ -167,6 +189,10 @@ public static void main(String [] args) throws IOException {
 					answer="Player 1";
 					return answer;
 				}// end of if
+				else if (dice_Roll2!=7 && dice_Roll2!=dice_player1) {
+					answer="Point";
+					return answer;
+				}
 				else if(dice_Roll2==7) {
 					System.out.println("Player 2 Wins!");
 					WriteToFile(pw,"Player 2 Wins!");
@@ -179,6 +205,13 @@ public static void main(String [] args) throws IOException {
 		return error;
 		
 }
+	/**
+	 * 
+	 * @param money_player1
+	 * @param money_player2
+	 * @param pw
+	 * @throws IOException
+	 */
 	public static void AnnounceFinalWinner(int money_player1, int money_player2, PrintWriter pw) throws IOException {
 		if(money_player1>money_player2) {
 			System.out.println("Player 1 Wins the Game!");
@@ -195,6 +228,11 @@ public static void main(String [] args) throws IOException {
 			
 		}//end of second else if
 	}
+	/**
+	 * @param pw
+	 * @param data
+	 * @throws IOException
+	 */
 	public static void WriteToFile(PrintWriter pw,String data) throws IOException{
 		pw.println(data);
 	}

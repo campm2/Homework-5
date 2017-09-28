@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 public class hw5_craps_game {
 public static void main(String [] args) throws IOException {
 	   String turn="Player 1";
-	   int WAGERS = 20;
+	   int MAX_NUMBER_OF_WAGERS = 20;
 	   int dice_player2=0;
 	   int dice_player1=0;
 	   int player2_Total_Amount=1000;
@@ -38,7 +38,7 @@ public static void main(String [] args) throws IOException {
 	   int Player1_Bet_Amount=100;
 	   int count=1;
 	   PrintWriter outFile =new PrintWriter("game.txt");
-	   while(count<=WAGERS || player1_Total_Amount <=0 || player2_Total_Amount<=0 ) {
+	   while(count<=MAX_NUMBER_OF_WAGERS || player1_Total_Amount <=0 || player2_Total_Amount<=0 ) {
 		   if(turn.equals("Player 1")) {
 			   dice_player1=RollDice();
 			   dice_player2=0;
@@ -56,6 +56,9 @@ public static void main(String [] args) throws IOException {
 			   	player2_Total_Amount-=Player1_Bet_Amount;
 			   	System.out.println("Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
 			   	WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
+			   	System.out.println("===========================================================================================");
+			   	WriteToFile(outFile,"===========================================================================================");
+			   	count++;
 		   }
 			else if (turn.equals("Player 2")){
 				dice_player2=RollDice();
@@ -75,8 +78,12 @@ public static void main(String [] args) throws IOException {
 					 }
 					player2_Total_Amount+=player2_Bet_Amount;
 					player1_Total_Amount-=player2_Bet_Amount;
-					System.out.println("Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
-				   	WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
+					System.out.println("Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
+				   	WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
+				   	count++;
+				   	System.out.println("===========================================================================================");
+				   	WriteToFile(outFile,"===========================================================================================");
+				   
 				 }
 				//if player 2 total money is less than 1000
 				  else if(player2_Total_Amount<1000) {
@@ -93,22 +100,26 @@ public static void main(String [] args) throws IOException {
 					  }
 					  player2_Total_Amount+=player2_Bet_Amount;
 					  player1_Total_Amount-=player2_Bet_Amount;
-					  System.out.println("Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
-					  WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ "and Player 2 has " +player2_Total_Amount);
-						
+					  System.out.println("Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
+					  WriteToFile(outFile,"Currently, Player 1 has "+player1_Total_Amount+ " and Player 2 has " +player2_Total_Amount);
+					  count++;
+					  System.out.println("===========================================================================================");
+					  WriteToFile(outFile,"===========================================================================================");
+					
 				  }// end of else
 		     }//end of else if
 		  turn=DecideWhoWin(dice_player1,dice_player2,outFile);
-		  count++;
+		  
 	   }//end of while loop	  
 	   AnnounceFinalWinner(player1_Total_Amount, player2_Total_Amount, outFile);
+	   outFile.close();
 	   
    }//main
-	/**
-	 *@param  randomNumber
-	 *@param rolls
-	 *@return rolls which will be between 1&6
-	 */
+   /**
+   *@param  randomNumber
+   *@param rolls
+   *@return rolls which will be between 1&6
+   */
 	public static int GenerateRandomNumber() {
 		Random randomNumbers=new Random();
 		int rolls= randomNumbers.nextInt(6)+1;
@@ -196,6 +207,7 @@ public static void main(String [] args) throws IOException {
 					return answer;
 				}// end of if
 				else if (dice_Roll2!=7 && dice_Roll2!=dice_player1) {
+					//System.out.println("The rolls is a "+ dice_player_1+" The point is a "+dice_player1 );
 					answer="Point";
 					return answer;
 				}//end of first else if
@@ -207,15 +219,14 @@ public static void main(String [] args) throws IOException {
 					return answer;
 				}// end of second else if
 				
-			}//end of main else if
-	}
+			}//end of else if
+		}//end of main else if
 		//will return this if function does not go through ifs
 		//should not get here
 		return error;
 		
-}
+	}//end of function
 	/**
-	 * 
 	 * @param money_player1// the total money player 1 has
 	 * @param money_player2// the total money player 2 has
 	 * @param pw// to output to file

@@ -25,16 +25,71 @@ ASSUMPTIONS
 import java.util.Random;
 import java.io.IOException;
 import java.io.PrintWriter;
-public class hw5_craps_game{
-   public static void main(String [] args) throws IOException {
-	   for(int i=0;i<=20;i++) {
+//import java.io.*;
+public class hw5_craps_game {
+public static void main(String [] args) throws IOException {
+	   String turn="Player 1";
+	   String who_Last=turn;
+	   int WAGERS = 20;
+	   int dice_player2=0;
+	   int dice_player1=0;
+	   int player2_Total_Amount=1000;
+	   int player1_Total_Amount=1000;
+	   int player2_Bet_Amount=0;
+	   int Player1_Bet_Amount=100;
+	   int count=1;
+	   PrintWriter outFile =new PrintWriter("game.txt");
+	   while(count<=WAGERS || player1_Total_Amount <=0 || player2_Total_Amount<=0 ) {
+		   if(turn.equals("Player 1")) {
+			   dice_player1=RollDice();
+			   dice_player2=0;
+			   System.out.printf("Wager %d:Bet is %d\n",count,Player1_Bet_Amount);
+			   System.out.println("Player 1 is rolling.");
+			   System.out.printf("The roll is a %d\n",dice_player1);
+			   turn=DecideWhoWin(dice_player1,dice_player2,outFile);
+			   //if(who_Last.equals("Player1")) {
+			   	player1_Total_Amount+=Player1_Bet_Amount;
+			   	player2_Total_Amount-=Player1_Bet_Amount;
+			   	System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+			   //}
+		   }
+			else if (turn.equals("Player 2")){
+				dice_player2=RollDice();
+				dice_player1=0;
+				if(player2_Total_Amount>=1000) {
+					player2_Bet_Amount=150;
+					System.out.printf("Wager %d:Bet is %d\n",count,player2_Bet_Amount);
+					System.out.println("Player 2 is rolling.");
+					System.out.printf("The roll is a %d\n",dice_player2);
+					turn=DecideWhoWin(dice_player1,dice_player2,outFile);
+					//if(who_Last.equals("Player 2")){
+						player2_Total_Amount+=player2_Bet_Amount;
+					   	player1_Total_Amount-=player2_Bet_Amount;
+						System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+					   	
+					//}
+				 }
+				  else if(player2_Total_Amount<1000) {
+					  player2_Bet_Amount=50;
+					  System.out.printf("Wager %d: Bet is %d\n",count,player2_Bet_Amount);
+					  System.out.println("Player 2 is rolling.");
+					  System.out.printf("The roll is a %d\n",dice_player2);
+					  turn=DecideWhoWin(dice_player1,dice_player2,outFile);
+					  //if(who_Last.equals("Player2")) {
+						  player2_Total_Amount+=player2_Bet_Amount;
+						   player1_Total_Amount-=player2_Bet_Amount;
+							System.out.printf("Currently, Player 1 has %d and Player 2 has %d\n", player1_Total_Amount, player2_Total_Amount);
+						
+					  //}
+	
+				  }// end of else
+		     }//end of else if
+		  turn=DecideWhoWin(dice_player1,dice_player2,outFile);
+		  count++;
+	   }//end of while loop	  
+	   AnnounceFinalWinner(player1_Total_Amount, player2_Total_Amount, outFile);
 	   
-	   
-		   
-		   
-	   }// end of for loop
-	   
-   }//end of main
+   }//main
 	/**
 	 *@param  randomNumber
 	 *@param rolls
@@ -43,136 +98,105 @@ public class hw5_craps_game{
 		Random randomNumbers=new Random();
 		int rolls= randomNumbers.nextInt(6)+1;
 		return rolls;
-		
 	}
 	/**
-	 * @param  sum_Of_Rolls
+	 * @param  sum_Of_Rolls // which returns the dice values added together
 	 */
 	public static int RollDice() {
 		int sum_Of_Rolls=GenerateRandomNumber() +GenerateRandomNumber();
 		return sum_Of_Rolls;
-		
 	}
 	public static String DecideWhoWin(int dice_player1,int dice_player2,PrintWriter pw) throws IOException {
-		//Allow to write to outfile
-		PrintWriter outFile =new PrintWriter("game.txt");
-	 
-		int result_Of_Dice_Roll=RollDice();
 		String answer="";
-		
-		switch (dice_player1) {
-		
-		case 1:
-			System.out.println("Player 1 is rolling the dice");
-			// if player 1 rolls a natural
-			if(result_Of_Dice_Roll==7 ) {
-			answer=("That is a Win! Player 1 wins");
-			}//end if
-			else if(result_Of_Dice_Roll==11) {
-			answer=("That is a Win! Player 1 wins");
-			}//end of else
-			break;
-		
-		case 2:
-			System.out.println("Player 1 is rolling the dice");
-			//if player 1 rolls a craps
-			if(result_Of_Dice_Roll==2) {
-				answer=("That is craps! Player 1 loses");
+		String error="error";
+		if(dice_player1==0) {
+			if(dice_player2==7 || dice_player2==11) {
+				// if player 1 rolls a natural
+				System.out.println("That is a natural! Player 2 Wins!");
+				WriteToFile(pw,"That is a natural! Player 2 Wins!");
+				answer="Player 2";
+				return answer;
 			
-			}//end of if
-			else if(result_Of_Dice_Roll==3) {
-			answer=("That is craps! Player 2 loses");
-			
-			}//end of first else if
-			else if(result_Of_Dice_Roll==12) {
-			answer=("That is craps! Player 2 loses");
-			}// end of second else if
-			break;
-		
-		case 3:
-			System.out.println("Player 1 is rolling the dice");
-			while(result_Of_Dice_Roll>=4 && result_Of_Dice_Roll<=10){
-				answer=("The roll is a"+ result_Of_Dice_Roll+"That is a point. Player 1 rolls again"); 
-				int result_Of_Dice_Roll2;
-				result_Of_Dice_Roll2=RollDice();
-				if(result_Of_Dice_Roll2==result_Of_Dice_Roll) {
-					answer= ("The roll is a"+ result_Of_Dice_Roll2+"That is a the point! Player 1 wins");
+			}
+			else if(dice_player2==2|| dice_player2==3 ||dice_player2==12) {
+				//if player  rolls a craps
+					System.out.println("That is craps! Player 2 loses");
+					WriteToFile(pw,"That is craps! Player 2 loses");
+					answer=("Player 1");
+					return answer;
+			}
+			else if(dice_player2==4 || dice_player2==5 || dice_player2==6 || dice_player2==8 || dice_player2==9 || dice_player2==10) {
+				int dice_Roll2=RollDice();
+				if(dice_Roll2==dice_player2) {
+					System.out.println("Player 2 Wins!");
+					WriteToFile(pw," Player 2 Wins!");
+					answer="Player 2";
+					return answer;
 				}// end of if
-				else if(result_Of_Dice_Roll2!=result_Of_Dice_Roll || result_Of_Dice_Roll2!=7) {
-					// confused on how to get it to go again
-					answer= ("The roll is a" +result_Of_Dice_Roll2 +".The point is" + result_Of_Dice_Roll2 + "Player 1 rolls again");
-					result_Of_Dice_Roll2=RollDice();
-				}// end of 1st else if
-				else if(result_Of_Dice_Roll2==7) {
-					System.out.printf("That roll is a %d. That is a loss! Player 1 loses", result_Of_Dice_Roll2 );
+				else if(dice_Roll2==7) {
+					System.out.println("Player 1 Wins!");
+					WriteToFile(pw," Player 1 Wins!");
+					answer="Player 1";
+					return answer;
+				}// end of second else if	
+			}
+	
+		}// end of if
+		
+		else if(dice_player2==0) {
+			if(dice_player1==7 || dice_player1==11) {
+				// if player 1 rolls a natural
+				answer=("Player 1");
+				System.out.println("That is a natural! Player 1 Wins!");
+				WriteToFile(pw,"That is a natural! Player 1 Wins!");
+				answer=("Player 1");
+				return answer;
+			}//end of if
+			else if(dice_player1==2 || dice_player1==3 || dice_player1==12) {
+				//if player  rolls a craps
+				System.out.println("That is craps! Player 1 loses");
+				WriteToFile(pw,"That is craps! Player 1 loses");
+				answer=("Player 2");
+				return answer;
+			}//end of else if
+			else if(dice_player1==4 || dice_player1==5 || dice_player1==6 || dice_player1==8 || dice_player1==9 || dice_player1<=10) {
+				int dice_Roll2=RollDice();
+				if(dice_Roll2==dice_player1) {
+					System.out.println("Player 1 Wins!");
+					WriteToFile(pw,"Player 1 Wins!");
+					answer="Player 1";
+					return answer;
+				}// end of if
+				else if(dice_Roll2==7) {
+					System.out.println("Player 2 Wins!");
+					WriteToFile(pw,"Player 2 Wins!");
+					answer="Player 2";
+					return answer;
 				}// end of second else if
 				
-				}// end of while
-				break;
-			
-			
-		}// end first of switch statement
+			}//end of else if
+	}
+		return error;
 		
-		switch (dice_player2) {
-		case 1:
-			System.out.println("Player 2 is rolling the dice");
-
-			// if player 2 rolls a natural
-			if(result_Of_Dice_Roll==7 ) {
-			answer=("That is a Win! Player 2 wins");
-			}//end if
-			else if(result_Of_Dice_Roll==11) {
-			answer=("That is a Win! Player 2 wins");
-			}//end of else
-			break;
-		
-		case 2:
-			System.out.println("Player 2 is rolling the dice");
-
-			//if player 2 rolls a craps
-			if(result_Of_Dice_Roll==2) {
-				answer=("That is craps! Player 2 loses");
+}
+	public static void AnnounceFinalWinner(int money_player1, int money_player2, PrintWriter pw) throws IOException {
+		if(money_player1>money_player2) {
+			System.out.println("Player 1 Wins the Game!");
+			WriteToFile(pw,"Player 1 Wins the Game!");
+		}// end of if
+		else if(money_player1==money_player2) {
+			System.out.println("Its a Draw!");
+			WriteToFile(pw,"Its a Draw!");
 			
-			}//end of if
-			else if(result_Of_Dice_Roll==3) {
-			answer=("That is craps! Player 2 loses");
+		}//end of first else if
+		else if(money_player1<money_player2) {
+			System.out.println("Player 2 Wins the Game!");
+			WriteToFile(pw,"Player 2 Wins the Game!");
 			
-			}//end of first else if
-			else if(result_Of_Dice_Roll==12) {
-			answer=("That is craps! Player 2 loses");
-			}// end of second else if
-			break;
-		
-		case 3:
-			System.out.println("Player 2 is rolling the dice");
-
-			while(result_Of_Dice_Roll>=4 && result_Of_Dice_Roll<=10){
-			answer=("The roll is a"+ result_Of_Dice_Roll+"That is a point. Player 2 rolls again"); 
-			int result_Of_Dice_Roll2;
-			result_Of_Dice_Roll2=RollDice();
-			if(result_Of_Dice_Roll2==result_Of_Dice_Roll) {
-				answer= ("The roll is a"+ result_Of_Dice_Roll2+"That is a the point! Player 2 wins");
-			}// end of if
-			else if(result_Of_Dice_Roll2!=result_Of_Dice_Roll || result_Of_Dice_Roll2!=7) {
-				// confused on how to get it to go again
-				answer= ("The roll is a" +result_Of_Dice_Roll2 +".The point is" + result_Of_Dice_Roll2 + "Player 2 rolls again");
-				result_Of_Dice_Roll2=RollDice();
-			}// end of 1st else if
-			else if(result_Of_Dice_Roll2==7) {
-				System.out.printf("That roll is a %d. That is a loss! Player 2 loses", result_Of_Dice_Roll2 );
-			}// end of second else if
-			
-			}// end of while
-			break;
-		
-		}// end of switch statement
-		
-		return answer;
-	
-	}// end of function bracket
-	public static void AnnounceFinalWinner(int money_player1, int money_player2, PrintWriter pw) {
-		//while()
-		int intital_Amount=1000;
+		}//end of second else if
+	}
+	public static void WriteToFile(PrintWriter pw,String data) throws IOException{
+		pw.println(data);
 	}
 } //end of class bracket 
 
